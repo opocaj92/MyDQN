@@ -9,6 +9,7 @@ The *utils* directory contains helper functions to manipulate raw pixel frames (
 - *EpsilonGreedyPolicy.py* implements the exploratory policy followed when generating new samples.
 - *ConvNN.py* implements the convolutional neural network (CNN) used to represent both the target network and the Q-network of the DQN.
 - *DQN.py* joins together the other components to implement the DQN itself and its training process. Its many parameters should allow for flexibility and reusability in a variety of context.
+
 The model itself is extremely memory consuming and CPU intensive, so it is probably going to get killed by your system if you don't execute it on a powerful machine (ideally on a GPU). This project was done as an exercise and as a simple example of this model, and doesn't aim to good performances or great scalability.
 
 ### Author
