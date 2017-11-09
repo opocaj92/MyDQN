@@ -1,11 +1,7 @@
-from theano import tensor as T
 import gym
 from mydqn.DQN import DQN
-from utils.PongImageProcessor import PongImageProcessor
 
-x = T.tensor4("x")
-y = T.matrix("y")
 PONG_VALID_ACTIONS = [2, 3]
-env = gym.make("Pong-v0")
-dqn = DQN(x, y, env, PONG_VALID_ACTIONS, PongImageProcessor)
-(episode_durations, episode_total_rewards) = dqn.train()
+env = gym.make("Breakout-v0")
+dqn = DQN(env, PONG_VALID_ACTIONS, replay_memory_max_dim = 500000)
+(episode_durations, episode_total_rewards) = dqn.train(epsilon_decay_steps = 500000, num_episodes = 10000)

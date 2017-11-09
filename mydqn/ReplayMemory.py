@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from AtariImageProcessor import AtariImageProcessor
 
 ''' This class represent the replay memory in which experience samples are
 stored. It is instantiated by providing the memory max dimension. The initialize()
@@ -13,22 +14,22 @@ class ReplayMemory:
         self.replay_memory_max_dim = replay_memory_max_dim
         self.pool = list()
         self.used_dim = 0
-    def initialize(self, env, image_processor, init_size, policy, valid_actions, epsilon):
+    def initialize(self, env, init_size, policy, valid_actions, epsilon, input_dim1, input_dim2, input_channels):
         observation = env.reset()
-        observation = image_processor.process_image(observation)
-        observation = image_processor.combine_images(observation, observation)
+        observation = AtariImageProcessor.process_image(observation, input_dim1, input_dim2)
+        observation = AtariImageProcessor.combine_images(observation, observation, input_channels)
         for _ in range(min(init_size, self.replay_memory_max_dim)):
             probs = policy.get_action(observation, epsilon)
             a = np.random.choice(np.arange(policy.num_actions), p = probs)
             next_observation, reward, done, _ = env.step(valid_actions[a])
-            next_observation = image_processor.process_image(next_observation)
-            next_observation = image_processor.combine_images(next_observation, observation)
+            next_observation = AtariImageProcessor.process_image(next_observation, input_dim1, input_dim2)
+            next_observation = AtariImageProcessor.combine_images(next_observation, observation, input_channels)
             self.pool.append((observation, a, reward, next_observation, done))
             self.used_dim += 1
             if done:
                 observation = env.reset()
-                observation = image_processor.process_image(observation)
-                observation = image_processor.combine_images(observation, observation)
+                observation = AtariImageProcessor.process_image(observation)
+                observation = AtariImageProcessor.combine_images(observation, observation)
             else:
                 observation = next_observation
     def insert(self, observation, a, reward, next_observation, done):
