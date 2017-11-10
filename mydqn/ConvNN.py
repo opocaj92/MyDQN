@@ -21,11 +21,11 @@ class ConvNN:
         self.l_conv1 = lasagne.layers.Conv2DLayer(self.l_input, 32, (8, 8), stride = 4, nonlinearity = lasagne.nonlinearities.rectify)
         self.l_conv2 = lasagne.layers.Conv2DLayer(self.l_conv1, 64, (4, 4), stride = 2, nonlinearity = lasagne.nonlinearities.rectify)
         self.l_conv3 = lasagne.layers.Conv2DLayer(self.l_conv2, 64, (3, 3), nonlinearity = lasagne.nonlinearities.rectify)
-        self.l_dense1 = lasagne.layers.DenseLayer(self.l_conv3, 512)
-        self.l_dense2 = lasagne.layers.DenseLayer(self.l_dense1, num_actions, nonlinearity = lasagne.nonlinearities.softmax)
+        self.l_dense1 = lasagne.layers.DenseLayer(self.l_conv3, 512, nonlinearity = lasagne.nonlinearities.rectify)
+        self.l_dense2 = lasagne.layers.DenseLayer(self.l_dense1, num_actions, nonlinearity = lasagne.nonlinearities.rectify)
         self.out = lasagne.layers.get_output(self.l_dense2)
         self.values = self.out.take(a, axis = 1)
-        self.loss = T.mean(lasagne.objectives.squared_error(self.values, y))
+        self.loss = T.mean(lasagne.objectives.squared_error(y, self.values))
         self.params = lasagne.layers.get_all_params(self.l_dense2, trainable = True)
         self.updates = lasagne.updates.rmsprop(self.loss, self.params, learning_rate = learning_rate, rho = rho, epsilon = epsilon)
         self.train_fn = theano.function([x, y, a], self.loss, updates = self.updates, allow_input_downcast = True)
@@ -35,6 +35,6 @@ class ConvNN:
     def set_params_value(self, params):
         lasagne.layers.set_all_param_values(self.l_dense2, params)
     def save_model(self, name):
-        np.save(name, lasagne.layers.get_all_param_values(self.l_dense2))
+        np.save(name, self.get_params_value())
     def load_model(self, name):
-        lasagne.layers.set_all_param_values(self.l_dense2, np.load(name))
+        self.set_params_value(np.load(name))

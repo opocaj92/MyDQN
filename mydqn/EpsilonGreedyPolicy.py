@@ -16,7 +16,7 @@ class EpsilonGreedyPolicy:
         self.input_dim2 = input_dim2
     def get_action(self, observation, epsilon):
         action_probs = np.ones(self.num_actions, dtype = np.float) * epsilon / self.num_actions
-        q_values = self.estimator.predict(observation.reshape(1, self.input_channels, self.input_dim1, self.input_dim2))
+        q_values = self.estimator.predict([observation])
         best_action = np.argmax(q_values)
-        action_probs[best_action] += (1 - epsilon)
+        action_probs[best_action] += (1.0 - epsilon)
         return action_probs

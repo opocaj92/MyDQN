@@ -13,10 +13,11 @@ class AtariImageProcessor:
         I = I[35:195]
         I = np.dot(I, [0.299, 0.587, 0.114])
         I = scipy.misc.imresize(I, (img_size1, img_size2), "nearest")
+        I = np.squeeze(I)
         return I.astype(np.float)
     @staticmethod
     def combine_images(I1, I2, m = 4):
-        if len(I1.shape) == m:
+        if I1.shape[0] == m:
             return np.append(I1[1:, :, :], np.expand_dims(I2, 0), axis = 0)
         else:
             return np.stack([I1] * m, axis = 0)
