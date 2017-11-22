@@ -17,6 +17,7 @@ class ConvNN:
         x = T.tensor4("x")
         y = T.vector("y")
         a = T.ivector("a")
+        x = x / 255.0
         self.l_input = lasagne.layers.InputLayer((None, input_channels, input_dim1, input_dim2), x)
         self.l_conv1 = lasagne.layers.Conv2DLayer(self.l_input, 32, (8, 8), stride = 4, nonlinearity = lasagne.nonlinearities.rectify)
         self.l_conv2 = lasagne.layers.Conv2DLayer(self.l_conv1, 64, (4, 4), stride = 2, nonlinearity = lasagne.nonlinearities.rectify)
